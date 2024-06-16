@@ -1,5 +1,6 @@
 const User= require('./../models/auth.model');
 const bcrypt= require('bcryptjs');
+const generateTokenAndSetCookie= require('./../lib/utils/generateToken');
 
 const signUp = async (req, res) =>{
           try {
@@ -11,12 +12,12 @@ const signUp = async (req, res) =>{
                               res.status(400).json({message: "Invalid email format"});
                     }
 
-                    const exitingUser= User.findOne({username});
+                    const exitingUser= await User.findOne({username});
                     if(exitingUser){
                               res.status(400).json({message: "Username already exists"});
                     }
 
-                    const exitingUserEmail= User.findOne({email});
+                    const exitingUserEmail= await User.findOne({email});
                     if(exitingUserEmail){
                               res.status(400).json({message: "Email already exists"});
                     }
@@ -32,6 +33,7 @@ const signUp = async (req, res) =>{
                     })
 
                     if(newUser){
+                              generateTokenAndSetCookie(newUser._id, res);
                               await newUser.save();
 
                               res.status(201).json({
@@ -41,7 +43,7 @@ const signUp = async (req, res) =>{
                                         email: newUser.email,
                                         password: newUser.password,
                                         followers: newUser.followers,
-                                        following: newUser.following,
+                                        following: newUser.followings,
                                         profileImg: newUser.profileImg,
                                         coverImg: newUser.coverImg,
                               })
@@ -51,7 +53,7 @@ const signUp = async (req, res) =>{
 
 
           } catch (error) {
-                    res.status(5000).json({message: error.message});
+                    res.status(500).json({message: error.message});
                     console.log(error.message);
           }
 }

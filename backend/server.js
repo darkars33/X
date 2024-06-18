@@ -1,5 +1,6 @@
 const express = require('express');
 const authRoutes= require('./routes/auth.route');
+const userRoutes= require('./routes/user.route');
 const dotenv= require('dotenv');
 const db = require('./db/db');
 const cookieParser = require('cookie-parser');
@@ -14,6 +15,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/', (req, res)=>{
           res.send('hello form server');

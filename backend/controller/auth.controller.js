@@ -58,20 +58,61 @@ const signUp = async (req, res) =>{
           }
 }
 
-const logIn =  (req, res) =>{
-          res.json({
-                    message: 'Hello from server'
-          })
+const logIn = async(req, res) =>{
+          try {
+                 const {username, password} = req.body;
+                 
+                 const user= await User.findOne({username});
+                 const isPasswordCorrect= await bcrypt.compare(password, user?.password || '');
+
+                 if(!user || !isPasswordCorrect){
+                    res.status(400).json({message: "Invalid username or password"});
+                 }
+
+                 generateTokenAndSetCookie(user._id, res);
+
+                 res.status(200).json({
+                    id: user._id,
+                    username: user.username,
+                    fullName: user.fullName,
+                    email: user.email,
+                    password: user.password,
+                    followers: user.followers,
+                    following: user.followings,
+                    profileImg: user.profileImg,
+                    coverImg: user.coverImg,
+                 })
+
+
+          } catch (error) {
+                    res.status(500).json({message: error.message});
+                    console.log(error.message);
+          }
 }
 
 const logOut =  (req, res) =>{
-          res.json({
-                    message: 'Hello from server'
-          })
+          try {
+                   res.cookie('jwt', '', {maxAge:0}) 
+                   res.status(200).json({message: "Logged out successfully"});
+          } catch (error) {
+                    res.status(500).json({message: error.message});
+                    console.log(error.message);
+          }
+}
+
+const getMe= async(req, res) =>{
+          try {
+                    const user= await User.findById(req.user._id).select('-password');
+                    res.status(200).json(user);
+          } catch (error) {
+                    res.status(500).json({message: error.message});
+                    console.log(error.message);
+          }
 }
 
 module.exports = {
           signUp,
           logIn,
-          logOut
+          logOut,
+          getMe
 }

@@ -84,7 +84,7 @@ const getSuggestedUsers= async (req, res) =>{
           }
 }
 
-const getUserUpdate= async (req, res) =>{
+const updateUser= async (req, res) =>{
           const {fullName, email, username, currentPassword, newPassword, bio, link} = req.body;
           let {profileImg, coverImg} = req.body;
 
@@ -150,5 +150,5 @@ module.exports= {
           getUserProfile,
           followUnfollowUser,
           getSuggestedUsers,
-          getUserUpdate
+          updateUser
 }

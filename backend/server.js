@@ -1,10 +1,12 @@
 const express = require('express');
-const authRoutes= require('./routes/auth.route');
-const userRoutes= require('./routes/user.route');
 const dotenv= require('dotenv');
 const db = require('./db/db');
 const cookieParser = require('cookie-parser');
 const cloudinary = require('cloudinary').v2;
+
+const authRoutes= require('./routes/auth.route');
+const userRoutes= require('./routes/user.route');
+const postRoutes= require('./routes/post.route');
 
 
 const app= express();
@@ -22,6 +24,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/post', postRoutes);
 
 app.get('/', (req, res)=>{
           res.send('hello form server');

@@ -170,11 +170,59 @@ const getLikedPosts = async (req, res) =>{
           }
 }
 
+const getFollowingPosts= async (req, res) =>{
+          try {
+                    const userId = req.user._id;
+                    const user= await User.findById(userId);
+                    if(!user) return res.status(400).json({message: 'user not found'});
+
+                    const following= user.followings;
+
+                    const followingPosts =await Post.find({user: {$in: following}}).sort({createdAt: -1}).populate({
+                              path: 'user',
+                              select: '-password'
+                    }).populate({
+                              path: 'comments.user',
+                              select: '-password'
+                    });
+
+                    res.status(200).json(followingPosts);
+
+          } catch (error) {
+                 console.log(error.message);
+                 res.status(500).json({message: error.message});   
+          }
+}
+
+const getUserPosts= async (req, res) =>{
+          try {
+                    const {username} = req.params;
+                    const user= await User.findOne({username});
+                    if(!user) return res.status(400).json({message: 'user not found'});
+
+                    const posts= await Post.find({user: user._id}).sort({createdAt: -1}).populate({
+                              path: 'user',
+                              select: '-password'
+                    }).populate({
+                              path: 'comments.user',
+                              select: '-password'
+                    })
+
+                    res.status(200).json(posts);
+
+          } catch (error) {
+                    console.log(error.message);
+                    res.status(500).json({message: error.message});
+          }
+}
+
 module.exports= {
           createPost,
           deletePost,
           commentOnPost,
           likeOrUnlikePost,
           getAllPosts,
-          getLikedPosts
+          getLikedPosts,
+          getFollowingPosts,
+          getUserPosts
 }

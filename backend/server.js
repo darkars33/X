@@ -7,7 +7,7 @@ const cloudinary = require('cloudinary').v2;
 const authRoutes= require('./routes/auth.route');
 const userRoutes= require('./routes/user.route');
 const postRoutes= require('./routes/post.route');
-
+const notificationRoutes= require('./routes/notification.route');
 
 const app= express();
 const PORT= 3000;
@@ -25,6 +25,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/notification', notificationRoutes);
 
 app.get('/', (req, res)=>{
           res.send('hello form server');

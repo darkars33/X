@@ -1,4 +1,3 @@
-const { get } = require("express/lib/response");
 const User = require("../models/auth.model");
 const Notification = require("../models/notification.model");
 const cloudinary = require('cloudinary').v2;

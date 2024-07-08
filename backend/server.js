@@ -3,6 +3,7 @@ const dotenv= require('dotenv');
 const db = require('./db/db');
 const cookieParser = require('cookie-parser');
 const cloudinary = require('cloudinary').v2;
+const cors = require('cors');
 
 const authRoutes= require('./routes/auth.route');
 const userRoutes= require('./routes/user.route');
@@ -18,6 +19,10 @@ cloudinary.config({
           api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
+app.use(cors({
+          origin: '*',
+          credentials: true,
+}))
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());

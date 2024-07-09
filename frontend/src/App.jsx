@@ -13,7 +13,7 @@ import LoadingSpinner from "./components/common/LoadingSpinner"
 
 function App() {
   
-  const {data:authUser, isLoading, isError, error} =  useQuery({
+  const {data:authUser, isLoading} =  useQuery({
     queryKey: 'authUser',
     queryFn: async () =>{
       try {
@@ -38,11 +38,11 @@ function App() {
   //   )
   // }
 
-  const hh= false;
+  // const hh= false;
 
   return (
     <div className='flex max-w-6xl mx-auto'>
-      <Sidebar />
+      {authUser && <Sidebar />}
       <Routes>
         <Route path='/' element={authUser ? <Home /> : <Navigate to='/login' />} />
         <Route path='/login' element={!authUser ? <LogIn /> : <Navigate to='/'/> } />
@@ -50,7 +50,7 @@ function App() {
         <Route path='/notifications' element={authUser ? <Notification /> : <Navigate to='/login' />} />
         <Route path='/profile/:username' element={authUser? <ProfilePage />: <Navigate to='/login' />} />
       </Routes>
-      <RightPanel />
+      {authUser && <RightPanel />}
       <Toaster />
     </div>
   )

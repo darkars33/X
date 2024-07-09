@@ -42,7 +42,7 @@ const LogIn = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "authUser" });
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
   });
 

@@ -25,11 +25,11 @@ const Sidebar = () => {
     },
     onSuccess: () => {
       toast.success("Logged out successfully");
-      queryClient.invalidateQueries({ queryKey: "authUser" });
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
   });
 
-  const { data: authUser } = useQuery({ queryKey: "authUser" });
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   console.log(authUser);
 
   const data = {

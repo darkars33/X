@@ -65,15 +65,37 @@ const Post = ({ post }) => {
     }
   })
 
+  const {mutate:commentPost, isPending:isCommenting} = useMutation({
+      mutationFn: async () =>{
+        try {
+          const res= await fetch(`/api/post/comment/${post._id}`, {
+            method: "POST",
+            headers:{
+              "Content-Type" : "application/json"
+            },
+            body: JSON.stringify({text: comment})
+          })
+          const data= res.json();
+          if(!res.ok) return new Error(data.error);
+          if(data.error) return new Error(data.error);
+          return data;
+        } catch (error) {
+          throw new Error('An error occurred while posting comment');
+        }
+      },
+      onSuccess: () =>{
+        toast.success('Comment posted successfully');
+        queryClient.invalidateQueries({queryKey: ["Posts"]});
+        setComment("");
+      }
+  })
+
   const isLiked= post.likes.includes(authUser._id);
 
   const postOwner = post.user;
 
   const isMyPost = authUser._id === post.user._id;
 
-  const formattedDate = "1h";
-
-  const isCommenting = false;
 
   const handleDeletePost = () => {
     deletePost();
@@ -81,6 +103,7 @@ const Post = ({ post }) => {
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    commentPost();
   };
 
   const handleLikePost = () => {
@@ -108,7 +131,7 @@ const Post = ({ post }) => {
                 @{postOwner.username}
               </Link>
               <span>·</span>
-              <span>{formattedDate}</span>
+              
             </span>
             {isMyPost && (
               <span className="flex justify-end flex-1">
@@ -147,7 +170,7 @@ const Post = ({ post }) => {
                   {post.comments.length}
                 </span>
               </div>
-              {/* We're using Modal Component from DaisyUI */}
+              
               <dialog
                 id={`comments_modal${post._id}`}
                 className="modal border-none outline-none"

@@ -13,6 +13,8 @@ const getUserProfile = async (req, res) => {
                               username: user.username,
                               fullName: user.fullName,
                               email: user.email,
+                              followers: user.followers,
+                              followings: user.followings,
                     });
           } catch (error) {
                     res.status(500).json({msg: error.message});

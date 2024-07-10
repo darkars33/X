@@ -37,8 +37,37 @@ const Post = ({ post }) => {
     }
   })
 
+  const {mutate:postLike, isLoading:isLiking} = useMutation({
+    mutationFn: async ({userId}) =>{
+      try {
+        const res = await fetch(`/api/post/like/${post._id}`,{
+          method: "POST",
+        })
+        const data= res.json();
+        if(!res.ok) {
+          throw new Error(error);
+        }
+        if(data.error) throw new Error (data.error);
+        return data;        
+      } catch (error) {
+        throw new Error ('An error occurred while liking post');
+      }
+    },
+    onSuccess: (updateLikes) =>{
+      queryClient.setQueryData(["Posts"], (oldData) =>{
+        return oldData.map((p) =>{
+          if(p._id=== post._id){
+            return {...p, likes: updateLikes}
+          }
+          return p;
+        })
+      })
+    }
+  })
+
+  const isLiked= post.likes.includes(authUser._id);
+
   const postOwner = post.user;
-  const isLiked = false;
 
   const isMyPost = authUser._id === post.user._id;
 
@@ -54,7 +83,9 @@ const Post = ({ post }) => {
     e.preventDefault();
   };
 
-  const handleLikePost = () => {};
+  const handleLikePost = () => {
+      postLike({userId: authUser._id});
+  };
 
   return (
     <>
@@ -188,7 +219,8 @@ const Post = ({ post }) => {
                 className="flex gap-1 items-center group cursor-pointer"
                 onClick={handleLikePost}
               >
-                {!isLiked && (
+                {isLiking && <LoadingSpinner size="sm" />}
+                {!isLiked && !isLiking &&  (
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
                 )}
                 {isLiked && (

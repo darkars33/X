@@ -6,27 +6,26 @@ import useFollow from "../../hook/userFollow";
 import LoadingSpinner from "./LoadingSpinner";
 
 const RightPanel = () => {
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["suggestedUsers"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/user/suggestedUsers");
+        const data = res.json();
+        if (!res.ok) throw new Error(error);
+        if (data.error) throw new Error(error);
+        return data;
+      } catch (error) {
+        throw new Error("An error occurred while fetching suggested users");
+      }
+    },
+  });
 
-  const {data:users, isLoading} = useQuery({
-	queryKey: ['suggestedUsers'],
-	queryFn: async () =>{
-		try {
-			const res= await fetch("/api/user/suggestedUsers");
-			const data= res.json();
-			if(!res.ok) throw new Error(error);
-			if(data.error) throw new Error(error);
-			return data;
-		} catch (error) {
-			throw new Error('An error occurred while fetching suggested users');
-		}
-	}
-  })
+  const jj = 0;
 
-  const jj=0
+  //   if(users?.length === 0) return <div className="md:w-64 w-0"></div>
 
-//   if(users?.length === 0) return <div className="md:w-64 w-0"></div>
-
-  const {follow, isPending} = useFollow();
+  const { follow, isPending } = useFollow();
 
   return (
     <div className="hidden lg:block my-4 mx-2">
@@ -68,9 +67,9 @@ const RightPanel = () => {
                   <button
                     className="btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm"
                     onClick={(e) => {
-			e.preventDefault()
-			follow(user._id)
-		}}
+                      e.preventDefault();
+                      follow(user._id);
+                    }}
                   >
                     {isPending ? <LoadingSpinner size="sm" /> : "Follow"}
                   </button>

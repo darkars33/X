@@ -10,11 +10,15 @@ const getUserProfile = async (req, res) => {
                     const user= await User.findOne({username}).select('-password');
                     if(!user) return res.status(400).json({msg: "User not found"});
                     res.status(200).json({
+                              _id: user._id,
                               username: user.username,
                               fullName: user.fullName,
                               email: user.email,
                               followers: user.followers,
                               followings: user.followings,
+                              createdAt: user.createdAt,
+                              profileImg: user.profileImg,
+                              coverImg: user.coverImg,
                     });
           } catch (error) {
                     res.status(500).json({msg: error.message});
@@ -116,7 +120,7 @@ const updateUser= async (req, res) =>{
                               if(user.profileImg){
                                         await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
                               }
-                              const uploadedResponse= await cloudinary.uploader(profileImg);
+                              const uploadedResponse= await cloudinary.uploader.upload(profileImg);
                               profileImg= uploadedResponse.secure_url;
                     }
 
@@ -124,7 +128,7 @@ const updateUser= async (req, res) =>{
                               if(user.coverImg){
                                         await cloudinary.uploader.destroy(user.coverImg.split("/".pop().split(".")[0]));
                               }
-                              const uploadedResponse= await cloudinary.uploader(coverImg);
+                              const uploadedResponse= await cloudinary.uploader.upload(coverImg);
                               coverImg= uploadedResponse.secure_url;
                     }
 

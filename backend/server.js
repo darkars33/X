@@ -1,9 +1,11 @@
+const path = require('path');
 const express = require('express');
 const dotenv= require('dotenv');
 const db = require('./db/db');
 const cookieParser = require('cookie-parser');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
+
 
 const authRoutes= require('./routes/auth.route');
 const userRoutes= require('./routes/user.route');
@@ -12,6 +14,8 @@ const notificationRoutes= require('./routes/notification.route');
 
 const app= express();
 const PORT= 3000;
+const __dir = path.resolve();
+
 dotenv.config();
 cloudinary.config({
           cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -35,6 +39,14 @@ app.use('/api/notification', notificationRoutes);
 app.get('/', (req, res)=>{
           res.send('hello form server');
 })
+
+if(process.env.NODE_ENV === "production") {
+          app.use(express.static(path.join(__dir, '/frontend/dist')));
+
+          app.get('*', (req, res) =>{
+                    res.sendFile(path.resolve(__dir, "frontend", "dist", "index.html"));
+          })
+}
 
 app.listen(PORT, () => {
           db();

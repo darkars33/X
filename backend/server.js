@@ -36,9 +36,6 @@ app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/notification', notificationRoutes);
 
-app.get('/', (req, res)=>{
-          res.send('hello form server');
-})
 
 if(process.env.NODE_ENV === "production") {
           app.use(express.static(path.join(__dir, '/frontend/dist')));

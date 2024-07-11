@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
@@ -24,14 +24,14 @@ const ProfilePage = () => {
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
 
-  const name= useParams();
-  console.log(name.username);
+  const {username}= useParams();
+  console.log(username);
 
-  const {data:userProfile, isLoading} = useQuery({
+  const {data:userProfile, isLoading, refetch, isRefetching} = useQuery({
 	queryKey: ["userProfile"],
 	queryFn: async() =>{
 		try {
-			const res= await fetch(`/api/user/profile/${name.username}`);
+			const res= await fetch(`/api/user/profile/${username}`);
       const data= res.json();
       if(!res.ok) throw new Error(error);
       if(data.error) throw new Error(error);
@@ -40,9 +40,12 @@ const ProfilePage = () => {
 			throw new Error("Error fetching user profile")
 		}
 	},
-  
   })
   console.log(userProfile)
+
+  useEffect(() =>{
+      refetch();
+  }, [username, refetch])
 
   const isMyProfile = true;
 
@@ -74,8 +77,8 @@ const ProfilePage = () => {
     <>
       <div className="flex-[4_4_0]  border-r border-gray-700 min-h-screen ">
         {/* HEADER */}
-        {isLoading && <ProfileHeaderSkeleton />}
-        {!isLoading && !userProfile && (
+        {(isLoading || isRefetching )&& <ProfileHeaderSkeleton />}
+        {!isLoading && isRefetching && !userProfile && (
           <p className="text-center text-lg mt-4">User not found</p>
         )}
         <div className="flex flex-col">
@@ -189,7 +192,7 @@ const ProfilePage = () => {
                   <div className="flex gap-2 items-center">
                     <IoCalendarOutline className="w-4 h-4 text-slate-500" />
                     <span className="text-sm text-slate-500">
-                      Joined July 2021
+                      Joined {userProfile?.createdAt.slice(0, 10)}
                     </span>
                   </div>
                 </div>
@@ -231,7 +234,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          <Posts />
+          <Posts username={username} userId={userProfile?._id} feedType={feedType} />
         </div>
       </div>
     </>

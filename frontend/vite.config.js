@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5000,
     proxy:{
       "/api":{
-        target: "https://x-mi5s.onrender.com",
+        target: "https://x-mi5s.onrender.com",//change in url
         changeOrigin: true,
         secure: false,
       }
